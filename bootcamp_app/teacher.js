@@ -8,7 +8,7 @@ const pool = new Pool({
 });
 
 const [, , cohort] = process.argv;
-
+const value = [`%${cohort}%`];
 pool
   .query(
     `
@@ -17,9 +17,10 @@ pool
     JOIN assistance_requests ON teachers.id=teacher_id
     JOIN students ON students.id=student_id
     JOIN cohorts ON cohorts.id=cohort_id
-    WHERE cohorts.name LIKE '%${cohort}%'
+    WHERE cohorts.name LIKE $1
     ORDER BY teacher;
-`
+`,
+    value
   )
   .then((res) => {
     res.rows.forEach((row) => console.log(`${cohort}: ${row.teacher}`));
